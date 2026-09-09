@@ -1,4 +1,9 @@
-"""Stack smoke test route: frontend -> backend -> Gemini."""
+"""Stack smoke test routes.
+
+No longer called by the frontend — kept as a curl-able check that the API
+is up and that the Gemini key and network path still work, independently of
+the analysis flow.
+"""
 
 from fastapi import APIRouter, HTTPException
 

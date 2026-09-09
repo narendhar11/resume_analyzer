@@ -26,3 +26,4 @@ dist/
 # Local resume/JD samples dropped in for manual testing (personal data).
 # Force-add with `git add -f` if a fixture is genuinely meant to be committed.
 *.pdf
+/Job Description.txt
