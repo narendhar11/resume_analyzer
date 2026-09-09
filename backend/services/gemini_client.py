@@ -2,7 +2,8 @@
 
 import os
 
-import google.generativeai as genai
+from google import genai
+from google.genai import errors as genai_errors
 
 DEFAULT_MODEL = "gemini-3.6-flash"
 
@@ -22,26 +23,29 @@ def get_model_name() -> str:
     return os.getenv("GEMINI_MODEL") or DEFAULT_MODEL
 
 
-def _configure() -> None:
+def _client() -> genai.Client:
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         raise GeminiError(
             "GEMINI_API_KEY is not set. Copy backend/.env.example to "
             "backend/.env and add a valid key."
         )
-    genai.configure(api_key=api_key)
+    return genai.Client(api_key=api_key)
 
 
 def ping(prompt: str = PING_PROMPT) -> str:
     """Send `prompt` to Gemini and return the reply text."""
-    _configure()
+    client = _client()
     model_name = get_model_name()
 
     try:
-        model = genai.GenerativeModel(model_name)
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(
+            model=model_name, contents=prompt
+        )
         reply = (response.text or "").strip()
-    except Exception as exc:  # SDK raises a wide range of transport errors
+    except genai_errors.APIError as exc:
+        raise GeminiError(f"Gemini call failed ({model_name}): {exc}") from exc
+    except Exception as exc:  # transport/network failures below the SDK
         raise GeminiError(f"Gemini call failed ({model_name}): {exc}") from exc
 
     if not reply:

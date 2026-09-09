@@ -19,7 +19,7 @@ Specific feature requirements, acceptance criteria, and task scope are tracked i
 | Backend | Python 3.11+, FastAPI |
 | Frontend | React + Vite |
 | Database | SQLite (file-based, local) |
-| LLM | Gemini API (`google-generativeai` SDK) |
+| LLM | Gemini API (`google-genai` SDK) |
 | File parsing | PDF: `pypdf` or `pdfplumber`; Markdown: read as plain text |
 
 ---
