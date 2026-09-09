@@ -1,0 +1,60 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1rem;
+}
+
+.app {
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 0.25rem;
+}
+
+.muted {
+  opacity: 0.7;
+  font-size: 0.9rem;
+  margin: 0.25rem 0;
+}
+
+.card {
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(128, 128, 128, 0.35);
+  border-radius: 8px;
+}
+
+button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: progress;
+  opacity: 0.6;
+}
+
+.result pre {
+  padding: 0.75rem;
+  border-radius: 6px;
+  background: rgba(128, 128, 128, 0.15);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error {
+  margin-top: 1rem;
+  color: #c0392b;
+  white-space: pre-wrap;
+}
