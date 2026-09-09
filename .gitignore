@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+*.egg-info/
+
+# Environment files (never commit real keys)
+.env
+.env.local
+.env.*.local
+
+# Node / Vite
+node_modules/
+dist/
+*.log
+
+# SQLite database (created at runtime)
+*.db
+
+# OS / editor cruft
+.DS_Store
+.idea/
+.vscode/
+
+# Local resume/JD samples dropped in for manual testing (personal data).
+# Force-add with `git add -f` if a fixture is genuinely meant to be committed.
+*.pdf
