@@ -28,7 +28,7 @@ uvicorn main:app --reload
 
 Backend serves on http://localhost:8000 (interactive docs at `/docs`).
 
-> **Note (Python 3.14):** `google-generativeai` pulls in `cryptography`, which
+> **Note (Python 3.14):** `google-genai` pulls in `cryptography`, which
 > has no prebuilt wheel for some 3.14 builds and fails to compile from source.
 > If `pip install -r requirements.txt` fails on `cryptography`, run
 > `pip install --only-binary=:all: cryptography` first, then retry.
