@@ -4,7 +4,7 @@ import os
 
 import google.generativeai as genai
 
-DEFAULT_MODEL = "gemini-2.0-flash"
+DEFAULT_MODEL = "gemini-3.6-flash"
 
 # Hardcoded smoke-test prompt. Deliberately trivial: it proves the API key,
 # network path and SDK wiring work without exercising any feature logic.
