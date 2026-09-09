@@ -3,9 +3,10 @@
 Local full-stack app that analyzes a resume against a job description using the
 Gemini API. See [AGENTS.md](AGENTS.md) for the standing technical conventions.
 
-**Current state:** project scaffolding only (KAN-4). The backend, frontend and
-Gemini wiring are in place and verified end to end via a single smoke-test
-endpoint. No upload, analysis, or database work yet.
+**Current state:** resume-vs-JD analysis works end to end (KAN-5). Upload a
+resume, supply a job description, and Gemini returns a fitment score plus
+recommendations. Results are not yet persisted — every report lives only as
+long as the page (KAN-6 adds SQLite storage and history).
 
 ## Prerequisites
 
@@ -45,18 +46,25 @@ Frontend serves on http://localhost:5173. It calls the backend at
 `http://localhost:8000` by default; override with `VITE_API_BASE_URL` in
 `frontend/.env` (see `frontend/.env.example`).
 
-## Verifying the stack
+## Using it
 
-Open http://localhost:5173 and click **Ping Gemini**. A successful call renders
-the live Gemini reply along with the model name and the prompt that was sent.
-If the key is missing or invalid the backend returns `502` and the UI shows the
-error detail.
+Open http://localhost:5173, choose a resume (`.pdf` or `.md`), paste the job
+description or upload it as a file, and click **Analyze resume**. The report
+shows a 0-100 fitment score with its tier, a summary, matched strengths,
+missing keywords, skill gaps and recommended edits.
 
-Equivalent check from the shell:
+Bad file types, an empty job description and Gemini outages all surface as a
+message above the report rather than a blank screen.
+
+Checks from the shell:
 
 ```bash
 curl http://localhost:8000/api/health       # {"status":"ok"}
 curl http://localhost:8000/api/ping-gemini  # live Gemini reply
+
+curl -F resume=@Resume.pdf \
+     -F jd_text="$(cat 'Job Description.txt')" \
+     http://localhost:8000/api/analyze
 ```
 
 ## Endpoints
@@ -65,20 +73,38 @@ curl http://localhost:8000/api/ping-gemini  # live Gemini reply
 |---|---|---|
 | GET | `/api/health` | Liveness check; does not call Gemini |
 | GET | `/api/ping-gemini` | Sends a hardcoded prompt to Gemini and returns the reply |
+| POST | `/api/analyze` | Analyzes a resume against a job description |
+
+`POST /api/analyze` takes multipart form data:
+
+| Field | Required | Notes |
+|---|---|---|
+| `resume` | yes | Resume file, `.pdf` or `.md`, max 5 MB |
+| `jd_text` | see note | Job description as plain text |
+| `jd_file` | see note | Job description file, `.pdf`, `.md` or `.txt` |
+
+Supply the job description through either field; `jd_file` wins if both are
+sent, and omitting both is a `400`. Unreadable uploads return `400`, Gemini
+failures `502`.
 
 ## Layout
 
 ```
 backend/
 ├── main.py                    # FastAPI entrypoint, env loading, CORS, routers
-├── models.py                  # Pydantic response schemas
-├── routes/ping.py             # /api/health, /api/ping-gemini
-├── services/gemini_client.py  # Gemini SDK wrapper + prompt construction
+├── models.py                  # Pydantic request/response schemas
+├── routes/
+│   ├── ping.py                # /api/health, /api/ping-gemini
+│   └── resume.py              # /api/analyze
+├── services/
+│   ├── gemini_client.py       # Gemini SDK wrapper + prompt construction
+│   └── file_parser.py         # PDF/Markdown/text extraction + validation
 ├── requirements.txt
 └── .env.example               # GEMINI_API_KEY placeholder
 frontend/
 ├── src/api/                   # fetch wrappers to the backend
-├── src/components/            # GeminiPingCard
+├── src/components/            # ResumeUploadForm, AnalysisReport, ReportSection
+├── src/pages/ResumeReview.jsx # Upload form + report, wired to the API
 ├── src/App.jsx
 └── vite.config.js
 ```

@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv(Path(__file__).parent / ".env")
 
 # Imported after load_dotenv so services see the environment at call time.
-from routes import ping  # noqa: E402
+from routes import ping, resume  # noqa: E402
 
 app = FastAPI(title="Resume Analyzer API", version="0.1.0")
 
@@ -23,3 +23,4 @@ app.add_middleware(
 )
 
 app.include_router(ping.router)
+app.include_router(resume.router)
